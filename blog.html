@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blog Post</title>
+<link rel="stylesheet" href="style.css" />
+
+<!-- Highlight.js (syntax highlighting) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+</head>
+
+<body class="blog-body">
+<div class="blog-container">
+
+    <button id="back-btn" class="nav-button">← Back</button>
+
+    <h1 id="blog-title" class="blog-post-title"></h1>
+
+    <!-- Hero image + expand button -->
+    <div class="blog-image-wrapper">
+        <img id="blog-image" class="blog-post-hero" src="" alt="Blog image" />
+        <button id="expand-btn" class="nav-button">Expand Diagram</button>
+    </div>
+
+    <div id="blog-content" class="md-content"></div>
+
+</div>
+
+<!-- Overlay viewer -->
+<div id="image-overlay" class="image-overlay hidden">
+    <img id="overlay-img" src="" alt="Expanded view" />
+</div>
+
+<script>
+// Simple markdown parser with lists + code blocks + headings
+function parseMarkdown(text) {
+    // Capture ```language\n...``` blocks (multiline)
+    const codeBlocks = [];
+    text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+        const escaped = code
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+
+        const languageClass = lang ? `class="language-${lang}"` : "";
+        const id = codeBlocks.length;
+
+        codeBlocks.push(`<pre><code ${languageClass}>${escaped}</code></pre>`);
+        return `@@CODEBLOCK${id}@@`;
+    });
+
+    // Headings
+    text = text.replace(/^# (.+)$/gm, "<h3>$1</h3>");
+
+    // Bold & italic
+    text = text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    text = text.replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+    // Lists
+    text = text.replace(/(?:^|\n)- (.*)/g, "<li>$1</li>");
+    text = text.replace(/(<li>[\s\S]*?<\/li>)/g, "<ul>$1</ul>");
+
+    // Split paragraphs
+    const paragraphs = text.trim().split(/\n\s*\n/);
+
+    let html = paragraphs
+        .map(p => `<p>${p.replace(/\n/g, "<br>")}</p>`)
+        .join("");
+
+    // Restore code blocks
+    codeBlocks.forEach((block, i) => {
+        html = html.replace(`@@CODEBLOCK${i}@@`, block);
+    });
+
+    return html;
+}
+
+// Back button
+document.getElementById("back-btn").onclick = () => history.back();
+
+// Blog loader
+const params = new URLSearchParams(window.location.search);
+const postFile = params.get("post");
+
+if (postFile) {
+    fetch(postFile)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("blog-title").textContent = data.title;
+
+            const blogImg = document.getElementById("blog-image");
+            if (data.image) {
+                blogImg.src = data.image;
+                document.getElementById("overlay-img").src = data.image;
+            } else {
+                blogImg.style.display = "none";
+                document.getElementById("expand-btn").style.display = "none";
+            }
+
+            document.getElementById("blog-content").innerHTML =
+                parseMarkdown(data.content || "");
+
+            // Highlight code blocks
+            document.querySelectorAll("pre code").forEach(block => {
+                hljs.highlightElement(block);
+            });
+        })
+        .catch(err => {
+            document.getElementById("blog-content").textContent =
+                "Oops! Could not load the blog.";
+            console.error(err);
+        });
+} else {
+    document.getElementById("blog-content").textContent = "No blog specified.";
+}
+
+// Expand image viewer
+const expandBtn = document.getElementById("expand-btn");
+const overlay = document.getElementById("image-overlay");
+
+expandBtn.onclick = () => {
+    overlay.classList.remove("hidden");
+};
+
+overlay.onclick = () => {
+    overlay.classList.add("hidden");
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+{
+    "title": "Irtiza's Portfolio for Anthropic",
+    "headshot": "assets/headshot.jpeg",
+    "summary": "Hi there! This is a portfolio tailored for Anthropic. Here, I quickly put together a scripted, edited, and animated video around Claude Code as well as some writing from my time working with Snapchat in the past year.",
+    "sections": [
+        {
+            "title": "Demo: \"Getting Started With Claude Code\"",
+            "tags": ["Final Cut Pro", "Figma", "Lottie", "Motion"],
+            "layout": "grid",
+            "content": [
+                "**Description: ** This is a short explainer video based on this [talk](https://www.youtube.com/watch?v=gv0WHhKelSE) at Code w/ Claude. Every asset and animation from the following video was custom designed for the purposes of this portfolio.",
+                "assets/demo.mp4",
+                "assets/demo-samples.png"
+            ]
+        },
+        {
+            "title": "Developer Guides: Developing for AR on the Snapchat Spectacles",
+            "tags": ["ExcaliDraw", "TypeScript"],
+            "layout": "list",
+            "content": [
+                "**Description: ** A series of explainer guides I created for fellow developers building AR experiences with Snapchat Spectacles. This was a three part series that covered some of the core ideas required for developing on the AR development engine."
+            ]
+        },
+        {
+            "title": "",
+            "tags": [],
+            "layout": "grid",
+            "content": [
+                "assets/blogs/blog-1.json",
+                "assets/blogs/blog-2.json",
+                "assets/blogs/blog-3.json"
+            ]
+        },
+        {
+            "title": "",
+            "tags": [],
+            "layout": "grid",
+            "content": [
+                "Here's a fun little animation I designed:",
+                "assets/animation-2.gif"
+            ]
+        }
+    ],
+    "footer": "© 2025 Irtiza. All rights reserved."
+}
